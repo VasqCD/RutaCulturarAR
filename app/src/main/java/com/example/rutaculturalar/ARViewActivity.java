@@ -11,6 +11,7 @@ import com.google.ar.sceneform.AnchorNode;
 import com.google.ar.sceneform.math.Vector3;
 import com.google.ar.sceneform.rendering.ModelRenderable;
 import com.google.ar.sceneform.ux.ArFragment;
+import com.google.ar.sceneform.ux.RotationController;
 import com.google.ar.sceneform.ux.TransformableNode;
 
 public class ARViewActivity extends AppCompatActivity {
@@ -27,7 +28,7 @@ public class ARViewActivity extends AppCompatActivity {
 
         // Carga el modelo 3D (.glb desde assets)
         ModelRenderable.builder()
-                .setSource(this, Uri.parse("modelo.glb"))
+                .setSource(this, Uri.parse("modelo2.glb"))
                 .setIsFilamentGltf(true)
                 .build()
                 .thenAccept(renderable -> model = renderable)
@@ -46,10 +47,20 @@ public class ARViewActivity extends AppCompatActivity {
             modelNode.setParent(anchorNode);
             modelNode.setRenderable(model);
 
+            // Limitar el rango de escala permitido por gestos
+            modelNode.getScaleController().setMinScale(0.25f);
+            modelNode.getScaleController().setMaxScale(0.50f);
 
-            modelNode.setLocalScale(new Vector3(0.000001f, 0.000001f, 0.000001f));  // Puedes ajustar a 0.05f si aún está muy grande
+            // Configurar el controlador de rotación
+            RotationController rotCtrl = modelNode.getRotationController();
+            rotCtrl.setEnabled(true);
+            rotCtrl.setRotationRateDegrees(30f);   // velocidad de rotación
 
             modelNode.select();
+            // Establecer la escala después
+            modelNode.setLocalScale(new Vector3(0.02f, 0.02f, 0.02f));
+
+
         });
     }
 }
