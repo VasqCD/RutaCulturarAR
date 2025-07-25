@@ -7,5 +7,26 @@
         android:name="com.google.ar.sceneform.ux.ArFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
-</FrameLayout>
 
+    <!-- Botón de volver -->
+    <ImageButton
+        android:id="@+id/btnBack"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_margin="16dp"
+        android:background="@android:color/transparent"
+        android:src="@android:drawable/ic_menu_revert"
+        android:contentDescription="Volver"
+        android:layout_gravity="top|start" />
+
+    <!-- Botón de ayuda -->
+    <ImageButton
+        android:id="@+id/btnHelp"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_margin="16dp"
+        android:background="@android:color/transparent"
+        android:src="@android:drawable/ic_menu_info_details"
+        android:contentDescription="Ayuda"
+        android:layout_gravity="top|end" />
+</FrameLayout>

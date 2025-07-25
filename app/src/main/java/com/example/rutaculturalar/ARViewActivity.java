@@ -1,8 +1,11 @@
 package com.example.rutaculturalar;
 
+import android.app.AlertDialog;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.MotionEvent;
+import android.view.View;
+import android.widget.ImageButton;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.ar.core.HitResult;
@@ -24,9 +27,26 @@ public class ARViewActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ar_view);
 
+        // Botón de volver
+        ImageButton btnBack = findViewById(R.id.btnBack);
+        btnBack.setOnClickListener(v -> finish());
+
+        // Botón de ayuda
+        ImageButton btnHelp = findViewById(R.id.btnHelp);
+        btnHelp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new AlertDialog.Builder(ARViewActivity.this)
+                        .setTitle("Información")
+                        .setMessage(getString(R.string.model_description))
+                        .setPositiveButton("OK", null)
+                        .show();
+            }
+        });
+
         arFragment = (ArFragment) getSupportFragmentManager().findFragmentById(R.id.arFragment);
 
-        // Carga el modelo 3D (.glb desde assets)
+        // Carga el modelo 3D
         ModelRenderable.builder()
                 .setSource(this, Uri.parse("modelo2.glb"))
                 .setIsFilamentGltf(true)
@@ -54,7 +74,7 @@ public class ARViewActivity extends AppCompatActivity {
             // Configurar el controlador de rotación
             RotationController rotCtrl = modelNode.getRotationController();
             rotCtrl.setEnabled(true);
-            rotCtrl.setRotationRateDegrees(30f);   // velocidad de rotación
+            rotCtrl.setRotationRateDegrees(30f);   // velocidad de rotacion
 
             modelNode.select();
             // Establecer la escala después

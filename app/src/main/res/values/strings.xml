@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">RutaCulturalAR</string>
+    <string name="model_description">Aquí irá la información del modelo 3D, historia, detalles, etc.</string>
 </resources>
