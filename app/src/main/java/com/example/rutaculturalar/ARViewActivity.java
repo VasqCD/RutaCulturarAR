@@ -3,9 +3,12 @@ package com.example.rutaculturalar;
 import android.app.AlertDialog;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.ar.core.HitResult;
@@ -36,9 +39,29 @@ public class ARViewActivity extends AppCompatActivity {
         btnHelp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                LayoutInflater inflater = getLayoutInflater();
+                View dialogView = inflater.inflate(R.layout.info_dialog, null);
+                ImageView infoImage = dialogView.findViewById(R.id.infoImage);
+                TextView infoTitle = dialogView.findViewById(R.id.infoTitle);
+                TextView infoText = dialogView.findViewById(R.id.infoText);
+                TextView infoSubtitle1 = dialogView.findViewById(R.id.infoSubtitle1);
+                TextView infoText1 = dialogView.findViewById(R.id.infoText1);
+                TextView infoSubtitle2 = dialogView.findViewById(R.id.infoSubtitle2);
+                TextView infoText2 = dialogView.findViewById(R.id.infoText2);
+                TextView infoSubtitle3 = dialogView.findViewById(R.id.infoSubtitle3);
+                TextView infoText3 = dialogView.findViewById(R.id.infoText3);
+                infoImage.setImageResource(R.drawable.modelo_info); // Asegúrate de tener modelo_info.png en res/drawable
+                infoTitle.setText(getString(R.string.info_title));
+                infoText.setText(getString(R.string.info_text));
+                infoSubtitle1.setText(getString(R.string.info_subtitle1));
+                infoText1.setText(getString(R.string.info_text1));
+                infoSubtitle2.setText(getString(R.string.info_subtitle2));
+                infoText2.setText(getString(R.string.info_text2));
+                infoSubtitle3.setText(getString(R.string.info_subtitle3));
+                infoText3.setText(getString(R.string.info_text3));
                 new AlertDialog.Builder(ARViewActivity.this)
                         .setTitle("Información")
-                        .setMessage(getString(R.string.model_description))
+                        .setView(dialogView)
                         .setPositiveButton("OK", null)
                         .show();
             }
