@@ -58,14 +58,14 @@ public class AR3DInfoProvider implements IAR3DInfoProvider {
     private LinearLayout createInfoLayout(String title, String description) {
         LinearLayout layout = new LinearLayout(context);
         layout.setOrientation(LinearLayout.VERTICAL);
-        layout.setBackgroundColor(Color.argb(220, 255, 255, 255)); // Más opaco para mejor legibilidad
-        layout.setPadding(20, 16, 20, 16); // Padding reducido
+        layout.setBackgroundColor(Color.argb(220, 255, 255, 255));
+        layout.setPadding(20, 16, 20, 16);
         layout.setGravity(Gravity.CENTER);
 
         // Título
         TextView titleView = new TextView(context);
         titleView.setText(title);
-        titleView.setTextSize(12); // Reducido de 16 a 12
+        titleView.setTextSize(12);
         titleView.setTypeface(null, Typeface.BOLD);
         titleView.setTextColor(Color.parseColor("#1E88E5"));
         titleView.setGravity(Gravity.CENTER);

@@ -43,6 +43,13 @@ public class ARViewActivity extends AppCompatActivity {
     private int infoCounter = 0; // Para rotar entre diferentes informaciones
     private TransformableNode currentModelNode; // Referencia al modelo actual
 
+    // Lista para mantener referencia a todos los objetos colocados
+    private java.util.List<AnchorNode> placedObjects = new java.util.ArrayList<>();
+
+    // Referencias a los botones
+    private android.widget.Button btnBack;
+    private android.widget.Button btnClear;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,6 +57,9 @@ public class ARViewActivity extends AppCompatActivity {
 
         // Inicializar ArFragment
         arFragment = (ArFragment) getSupportFragmentManager().findFragmentById(R.id.arFragment);
+
+        // Inicializar botones
+        initializeButtons();
 
         // Inicializar managers con inyección de dependencias
         initializeManagers();
@@ -62,6 +72,49 @@ public class ARViewActivity extends AppCompatActivity {
 
         // Configurar actualización de iluminación
         setupLightEstimation();
+    }
+
+    private void initializeButtons() {
+        btnBack = findViewById(R.id.btnBack);
+        btnClear = findViewById(R.id.btnClear);
+
+        // Configurar botón volver
+        btnBack.setOnClickListener(v -> {
+            // Limpiar recursos antes de salir
+            clearAllObjects();
+            if (ar3DInfoProvider != null) {
+                ar3DInfoProvider.hide3DInfo();
+            }
+            // Volver a MainActivity
+            finish();
+        });
+
+        // Configurar botón limpiar
+        btnClear.setOnClickListener(v -> {
+            clearAllObjects();
+            Toast.makeText(this, "Todos los objetos han sido eliminados", Toast.LENGTH_SHORT).show();
+        });
+    }
+
+    private void clearAllObjects() {
+        // Ocultar información 3D
+        if (ar3DInfoProvider != null) {
+            ar3DInfoProvider.hide3DInfo();
+        }
+
+        // Remover todos los objetos colocados
+        for (AnchorNode anchorNode : placedObjects) {
+            if (anchorNode != null) {
+                anchorNode.setParent(null);
+                anchorNode.getAnchor().detach();
+            }
+        }
+        placedObjects.clear();
+
+        // Resetear variables
+        isModelPlaced = false;
+        currentModelNode = null;
+        infoCounter = 0;
     }
 
     private void initializeManagers() {
@@ -166,6 +219,9 @@ public class ARViewActivity extends AppCompatActivity {
     private void placeModelOnSurface(HitResult hitResult, String surfaceType) {
         AnchorNode anchorNode = new AnchorNode(hitResult.createAnchor());
         anchorNode.setParent(arFragment.getArSceneView().getScene());
+
+        // Agregar a la lista de objetos colocados para poder eliminarlos después
+        placedObjects.add(anchorNode);
 
         TransformableNode modelNode = new TransformableNode(arFragment.getTransformationSystem());
         modelNode.setParent(anchorNode);
