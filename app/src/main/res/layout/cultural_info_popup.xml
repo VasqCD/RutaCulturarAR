@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="320dp"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/popup_background"
+    android:padding="16dp"
+    android:maxHeight="400dp">
+
+    <TextView
+        android:id="@+id/cultural_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Título Cultural"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="#1E88E5"
+        android:layout_marginBottom="8dp" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:maxHeight="250dp">
+
+        <TextView
+            android:id="@+id/cultural_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Descripción cultural aquí..."
+            android:textSize="14sp"
+            android:textColor="#333333"
+            android:lineSpacingExtra="2dp" />
+    </ScrollView>
+
+    <Button
+        android:id="@+id/close_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Cerrar"
+        android:layout_gravity="end"
+        android:layout_marginTop="12dp"
+        android:backgroundTint="#1E88E5"
+        android:textColor="#FFFFFF"
+        android:minWidth="80dp" />
+
+</LinearLayout>
