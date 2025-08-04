@@ -28,7 +28,7 @@ public class ARViewActivity extends AppCompatActivity {
 
         // Carga el modelo 3D (.glb desde assets)
         ModelRenderable.builder()
-                .setSource(this, Uri.parse("modelo2.glb"))
+                .setSource(this, Uri.parse("CampoFutbolMaya.glb"))
                 .setIsFilamentGltf(true)
                 .build()
                 .thenAccept(renderable -> model = renderable)
@@ -48,8 +48,8 @@ public class ARViewActivity extends AppCompatActivity {
             modelNode.setRenderable(model);
 
             // Limitar el rango de escala permitido por gestos
-            modelNode.getScaleController().setMinScale(0.25f);
-            modelNode.getScaleController().setMaxScale(0.50f);
+            modelNode.getScaleController().setMinScale(2f);
+            modelNode.getScaleController().setMaxScale(3f);
 
             // Configurar el controlador de rotación
             RotationController rotCtrl = modelNode.getRotationController();
