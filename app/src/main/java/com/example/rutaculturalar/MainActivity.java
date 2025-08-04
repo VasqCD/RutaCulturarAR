@@ -20,8 +20,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Establecer fondo desde assets
-        LinearLayout layout = findViewById(R.id.mainLayout); // Asegúrate que el LinearLayout tenga este id
+        // Establecer fondo
+        LinearLayout layout = findViewById(R.id.mainLayout);
         try {
             InputStream is = getAssets().open("fondo.jpg");
             Bitmap bitmap = BitmapFactory.decodeStream(is);
