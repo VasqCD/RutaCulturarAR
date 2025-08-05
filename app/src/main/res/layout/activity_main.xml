@@ -15,15 +15,47 @@ android:padding="24dp">
     android:text="Ruta Cultural AR"
     android:textSize="28sp"
     android:textStyle="bold"
-    android:textColor="#1E88E5" />
+    android:textColor="#1E88E5"
+    android:layout_marginBottom="40dp" />
+
+<TextView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Explora el Campo de Pelota Maya de Copán"
+    android:textSize="16sp"
+    android:textColor="#666666"
+    android:gravity="center"
+    android:layout_marginBottom="50dp" />
 
 <Button
     android:id="@+id/buttonStartAR"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="🏛️ Realidad Aumentada Libre"
+    android:layout_marginBottom="20dp"
+    android:padding="16dp"
+    android:backgroundTint="#1E88E5"
+    android:textColor="#FFFFFF"
+    android:textSize="16sp" />
+
+<Button
+    android:id="@+id/buttonImageTracking"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="📱 Reconocimiento de Imágenes"
+    android:layout_marginBottom="20dp"
+    android:padding="16dp"
+    android:backgroundTint="#4CAF50"
+    android:textColor="#FFFFFF"
+    android:textSize="16sp" />
+
+<TextView
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:text="Iniciar experiencia"
-    android:layout_marginTop="30dp"
-    android:padding="12dp"
-    android:backgroundTint="#1E88E5"
-    android:textColor="#FFFFFF" />
+    android:text="• AR Libre: Coloca modelos en cualquier superficie\n• Reconocimiento: Enfoca una foto del campo maya"
+    android:textSize="12sp"
+    android:textColor="#999999"
+    android:gravity="center"
+    android:layout_marginTop="30dp" />
+
 </LinearLayout>

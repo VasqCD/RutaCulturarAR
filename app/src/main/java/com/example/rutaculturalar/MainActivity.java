@@ -14,13 +14,14 @@ import java.io.InputStream;
 public class MainActivity extends AppCompatActivity {
 
     Button buttonStartAR;
+    Button buttonImageTracking;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Establecer fondo
+        // Establecer fondo desde assets
         LinearLayout layout = findViewById(R.id.mainLayout);
         try {
             InputStream is = getAssets().open("fondo.jpg");
@@ -31,10 +32,17 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
+        // Configurar botón AR libre
         buttonStartAR = findViewById(R.id.buttonStartAR);
-
         buttonStartAR.setOnClickListener(view -> {
             Intent intent = new Intent(MainActivity.this, ARViewActivity.class);
+            startActivity(intent);
+        });
+
+        // Configurar botón Image Tracking
+        buttonImageTracking = findViewById(R.id.buttonImageTracking);
+        buttonImageTracking.setOnClickListener(view -> {
+            Intent intent = new Intent(MainActivity.this, ImageTrackingActivity.class);
             startActivity(intent);
         });
     }

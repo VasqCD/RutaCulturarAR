@@ -55,6 +55,12 @@ public class ARViewActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ar_view);
 
+        // Verificar permisos de cámara antes de inicializar AR
+        if (!hasCameraPermission()) {
+            requestCameraPermission();
+            return;
+        }
+
         // Inicializar ArFragment
         arFragment = (ArFragment) getSupportFragmentManager().findFragmentById(R.id.arFragment);
 
@@ -72,6 +78,31 @@ public class ARViewActivity extends AppCompatActivity {
 
         // Configurar actualización de iluminación
         setupLightEstimation();
+    }
+
+    private boolean hasCameraPermission() {
+        return androidx.core.content.ContextCompat.checkSelfPermission(this,
+            android.Manifest.permission.CAMERA) == android.content.pm.PackageManager.PERMISSION_GRANTED;
+    }
+
+    private void requestCameraPermission() {
+        androidx.core.app.ActivityCompat.requestPermissions(this,
+            new String[]{android.Manifest.permission.CAMERA}, 1000);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == 1000) {
+            if (grantResults.length > 0 && grantResults[0] == android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                // Reiniciar la actividad si se conceden los permisos
+                recreate();
+            } else {
+                // Mostrar mensaje y cerrar si no se conceden los permisos
+                Toast.makeText(this, "Permisos de cámara requeridos para AR", Toast.LENGTH_LONG).show();
+                finish();
+            }
+        }
     }
 
     private void initializeButtons() {
