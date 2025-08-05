@@ -22,8 +22,35 @@ public class CustomImageTrackingArFragment extends ArFragment {
     @Override
     public void onResume() {
         super.onResume();
-        // Configurar image tracking cuando el fragmento esté activo
+
+        hideHandAnimation();
+
         configureImageTrackingWhenReady();
+    }
+
+    private void hideHandAnimation() {
+        new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
+            hideImageViewsRecursively(getView());
+        }, 500);
+    }
+
+    private void hideImageViewsRecursively(android.view.View view) {
+        if (view == null) return;
+
+        if (view instanceof android.widget.ImageView) {
+            android.widget.ImageView imageView = (android.widget.ImageView) view;
+            if (imageView.getDrawable() != null) {
+                String drawable = imageView.getDrawable().toString();
+                if (drawable.contains("sceneform_hand") || drawable.contains("hand_phone")) {
+                    imageView.setVisibility(android.view.View.GONE);
+                }
+            }
+        } else if (view instanceof android.view.ViewGroup) {
+            android.view.ViewGroup viewGroup = (android.view.ViewGroup) view;
+            for (int i = 0; i < viewGroup.getChildCount(); i++) {
+                hideImageViewsRecursively(viewGroup.getChildAt(i));
+            }
+        }
     }
 
     private void configureImageTrackingWhenReady() {
@@ -57,7 +84,7 @@ public class CustomImageTrackingArFragment extends ArFragment {
 
             android.util.Log.d("ImageTracking", "Configuración de image tracking completada");
 
-            // Mostrar mensaje de éxito en UI thread
+            // Mostrar mensaje de éxito
             if (getActivity() != null) {
                 getActivity().runOnUiThread(() -> {
                     android.widget.Toast.makeText(getContext(),
@@ -96,7 +123,7 @@ public class CustomImageTrackingArFragment extends ArFragment {
                 // Usar nombre sin extensión como identificador
                 String imageIdentifier = imageName.replace(".jpg", "").replace(".png", "");
 
-                // Agregar imagen a la base de datos con información de debugging
+                // Agregar imagen a la base de datos
                 int imageIndex = imageDatabase.addImage(imageIdentifier, bitmap);
                 android.util.Log.d("ImageTracking", "Imagen agregada: " + imageIdentifier +
                         " (índice: " + imageIndex + ", tamaño: " + bitmap.getWidth() + "x" + bitmap.getHeight() + ")");
