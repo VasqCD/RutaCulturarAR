@@ -9,28 +9,28 @@ import com.google.ar.core.TrackingState;
 import com.google.ar.sceneform.AnchorNode;
 import com.google.ar.sceneform.math.Vector3;
 import com.google.ar.sceneform.rendering.ModelRenderable;
-import com.google.ar.sceneform.ux.ArFragment;
 import com.google.ar.sceneform.ux.TransformableNode;
 
 import com.example.rutaculturalar.ar.managers.ARModelManager;
 import com.example.rutaculturalar.ar.managers.AR3DInfoProvider;
-import com.example.rutaculturalar.ar.managers.ImageTracker;
+import com.example.rutaculturalar.ar.fragments.CustomImageTrackingArFragment; // NUEVO IMPORT
 import com.example.rutaculturalar.ar.interfaces.IARModelManager;
 import com.example.rutaculturalar.ar.interfaces.IAR3DInfoProvider;
 import com.example.rutaculturalar.data.MayanBallCourtInfo;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
-public class ImageTrackingActivity extends AppCompatActivity implements ImageTracker.IImageTrackingCallback {
+public class ImageTrackingActivity extends AppCompatActivity {
 
-    private ArFragment arFragment;
+    private CustomImageTrackingArFragment arFragment; // CAMBIO AQUÍ
     private ModelRenderable model;
-    private ImageTracker imageTracker;
     private IARModelManager modelManager;
     private IAR3DInfoProvider ar3DInfoProvider;
 
     private android.widget.Button btnBack;
-    private AnchorNode currentImageAnchor;
+    private Map<String, AnchorNode> imageAnchors = new HashMap<>(); // Para manejar múltiples imágenes
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,8 +43,8 @@ public class ImageTrackingActivity extends AppCompatActivity implements ImageTra
             return;
         }
 
-        // Inicializar ArFragment
-        arFragment = (ArFragment) getSupportFragmentManager().findFragmentById(R.id.arFragment);
+        // Inicializar CustomArFragment
+        setupCustomArFragment();
 
         // Inicializar managers
         initializeManagers();
@@ -55,21 +55,34 @@ public class ImageTrackingActivity extends AppCompatActivity implements ImageTra
         // Cargar modelo
         loadMayanBallCourtModel();
 
-        // Configurar image tracking
-        setupImageTracking();
-
         // Configurar frame listener para detectar imágenes
         setupFrameListener();
     }
 
+    private void setupCustomArFragment() {
+        arFragment = (CustomImageTrackingArFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.arFragment);
+
+        if (arFragment == null) {
+            arFragment = new CustomImageTrackingArFragment();
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.arFragment, arFragment)
+                    .commit();
+        }
+
+        // Configurar las imágenes a detectar
+        String[] imagesToTrack = {"campo_maya_reference.jpg"};
+        arFragment.setImagesToTrack(imagesToTrack);
+    }
+
     private boolean hasCameraPermission() {
         return androidx.core.content.ContextCompat.checkSelfPermission(this,
-            android.Manifest.permission.CAMERA) == android.content.pm.PackageManager.PERMISSION_GRANTED;
+                android.Manifest.permission.CAMERA) == android.content.pm.PackageManager.PERMISSION_GRANTED;
     }
 
     private void requestCameraPermission() {
         androidx.core.app.ActivityCompat.requestPermissions(this,
-            new String[]{android.Manifest.permission.CAMERA}, 1000);
+                new String[]{android.Manifest.permission.CAMERA}, 1000);
     }
 
     private void initializeManagers() {
@@ -79,7 +92,10 @@ public class ImageTrackingActivity extends AppCompatActivity implements ImageTra
 
     private void setupBackButton() {
         btnBack = findViewById(R.id.btnBack);
-        btnBack.setOnClickListener(v -> finish());
+        btnBack.setOnClickListener(v -> {
+            clearAllAnchors();
+            finish();
+        });
     }
 
     private void loadMayanBallCourtModel() {
@@ -87,7 +103,9 @@ public class ImageTrackingActivity extends AppCompatActivity implements ImageTra
             @Override
             public void onModelLoaded(ModelRenderable loadedModel) {
                 model = loadedModel;
-                Toast.makeText(ImageTrackingActivity.this, "Modelo cargado - Enfoca una imagen del campo maya", Toast.LENGTH_LONG).show();
+                Toast.makeText(ImageTrackingActivity.this,
+                        "Modelo cargado - Enfoca una imagen del campo maya",
+                        Toast.LENGTH_LONG).show();
             }
 
             @Override
@@ -97,57 +115,67 @@ public class ImageTrackingActivity extends AppCompatActivity implements ImageTra
         });
     }
 
-    private void setupImageTracking() {
-        // Esperar a que la sesión AR esté lista
-        arFragment.getArSceneView().getScene().addOnUpdateListener(frameTime -> {
-            if (imageTracker == null && arFragment.getArSceneView().getSession() != null) {
-                imageTracker = new ImageTracker(
-                    this,
-                    arFragment.getArSceneView().getSession(),
-                    this
-                );
-
-                // Configurar las imágenes a detectar (deben estar en assets/)
-                String[] imagesToTrack = {"campo_maya_reference.jpg"}; // Imagen de referencia del campo maya
-                imageTracker.setupImageDatabase(imagesToTrack);
-                imageTracker.enableImageTracking(true);
-            }
-        });
-    }
-
     private void setupFrameListener() {
-        arFragment.getArSceneView().getScene().addOnUpdateListener(frameTime -> {
-            Frame frame = arFragment.getArSceneView().getArFrame();
-            if (frame != null && imageTracker != null) {
-                // Verificar imágenes detectadas en cada frame
-                Collection<AugmentedImage> augmentedImages = frame.getUpdatedTrackables(AugmentedImage.class);
-
-                for (AugmentedImage augmentedImage : augmentedImages) {
-                    if (augmentedImage.getTrackingState() == TrackingState.TRACKING) {
-                        imageTracker.onImageDetected(augmentedImage);
-                    } else if (augmentedImage.getTrackingState() == TrackingState.STOPPED) {
-                        imageTracker.onImageLost(augmentedImage);
-                    }
+        if (arFragment != null) {
+            arFragment.getArSceneView().getScene().addOnUpdateListener(frameTime -> {
+                Frame frame = arFragment.getArSceneView().getArFrame();
+                if (frame != null) {
+                    updateAugmentedImages(frame);
                 }
-            }
-        });
+            });
+        }
     }
 
-    @Override
-    public void onImageFound(AugmentedImage augmentedImage) {
+    private void updateAugmentedImages(Frame frame) {
+        Collection<AugmentedImage> augmentedImages = frame.getUpdatedTrackables(AugmentedImage.class);
+
+        for (AugmentedImage augmentedImage : augmentedImages) {
+            String imageName = augmentedImage.getName();
+
+            if (imageName == null) continue;
+
+            switch (augmentedImage.getTrackingState()) {
+                case TRACKING:
+                    if (!imageAnchors.containsKey(imageName)) {
+                        onImageFound(augmentedImage);
+                    }
+                    break;
+
+                case STOPPED:
+                    if (imageAnchors.containsKey(imageName)) {
+                        onImageLost(augmentedImage);
+                    }
+                    break;
+
+                default:
+                    break;
+            }
+        }
+    }
+
+    private void onImageFound(AugmentedImage augmentedImage) {
         runOnUiThread(() -> {
-            if (model != null && currentImageAnchor == null) {
+            String imageName = augmentedImage.getName();
+
+            if (model != null && !imageAnchors.containsKey(imageName)) {
                 // Crear anchor en la posición de la imagen detectada
-                currentImageAnchor = new AnchorNode(augmentedImage.createAnchor(augmentedImage.getCenterPose()));
-                currentImageAnchor.setParent(arFragment.getArSceneView().getScene());
+                AnchorNode imageAnchor = new AnchorNode(
+                        augmentedImage.createAnchor(augmentedImage.getCenterPose())
+                );
+                imageAnchor.setParent(arFragment.getArSceneView().getScene());
+                imageAnchors.put(imageName, imageAnchor);
 
                 // Crear nodo del modelo
-                TransformableNode modelNode = new TransformableNode(arFragment.getTransformationSystem());
-                modelNode.setParent(currentImageAnchor);
+                TransformableNode modelNode = new TransformableNode(
+                        arFragment.getTransformationSystem()
+                );
+                modelNode.setParent(imageAnchor);
                 modelNode.setRenderable(model);
 
-                // Configurar escala apropiada
-                modelNode.setLocalScale(new Vector3(0.1f, 0.1f, 0.1f));
+                // Configurar escala apropiada basada en el tamaño de la imagen
+                float imageExtentX = augmentedImage.getExtentX();
+                float scaleFactor = imageExtentX / 0.5f; // Ajustar según necesidades
+                modelNode.setLocalScale(new Vector3(scaleFactor, scaleFactor, scaleFactor));
 
                 // Configurar controles
                 setupModelControls(modelNode);
@@ -155,19 +183,27 @@ public class ImageTrackingActivity extends AppCompatActivity implements ImageTra
                 // Mostrar información cultural flotante
                 showCulturalInfo(modelNode);
 
-                Toast.makeText(this, "¡Campo maya detectado! Toca el modelo para más información", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this,
+                        "¡Campo maya detectado! Toca el modelo para más información",
+                        Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    @Override
-    public void onImageLost(AugmentedImage augmentedImage) {
+    private void onImageLost(AugmentedImage augmentedImage) {
         runOnUiThread(() -> {
-            if (currentImageAnchor != null) {
-                currentImageAnchor.setParent(null);
-                currentImageAnchor = null;
+            String imageName = augmentedImage.getName();
+            AnchorNode anchor = imageAnchors.get(imageName);
+
+            if (anchor != null) {
+                anchor.setParent(null);
+                anchor.getAnchor().detach();
+                imageAnchors.remove(imageName);
                 ar3DInfoProvider.hide3DInfo();
-                Toast.makeText(this, "Imagen perdida - Vuelve a enfocar la imagen", Toast.LENGTH_SHORT).show();
+
+                Toast.makeText(this,
+                        "Imagen perdida - Vuelve a enfocar la imagen",
+                        Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -176,7 +212,6 @@ public class ImageTrackingActivity extends AppCompatActivity implements ImageTra
         // Configurar controles del modelo
         modelNode.getScaleController().setMinScale(0.05f);
         modelNode.getScaleController().setMaxScale(0.3f);
-
         modelNode.getRotationController().setEnabled(true);
 
         // Listener para mostrar información al tocar
@@ -194,11 +229,23 @@ public class ImageTrackingActivity extends AppCompatActivity implements ImageTra
         infoAnchor.setWorldPosition(Vector3.add(modelPosition, infoOffset));
 
         ar3DInfoProvider.show3DInfo(
-            MayanBallCourtInfo.getMainCourtInfo().title,
-            MayanBallCourtInfo.getMainCourtInfo().description,
-            infoAnchor,
-            new Vector3(0, 0, 0)
+                MayanBallCourtInfo.getMainCourtInfo().title,
+                MayanBallCourtInfo.getMainCourtInfo().description,
+                infoAnchor,
+                new Vector3(0, 0, 0)
         );
+    }
+
+    private void clearAllAnchors() {
+        for (AnchorNode anchor : imageAnchors.values()) {
+            anchor.setParent(null);
+            anchor.getAnchor().detach();
+        }
+        imageAnchors.clear();
+
+        if (ar3DInfoProvider != null) {
+            ar3DInfoProvider.hide3DInfo();
+        }
     }
 
     @Override
@@ -214,10 +261,8 @@ public class ImageTrackingActivity extends AppCompatActivity implements ImageTra
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == 1000) {
             if (grantResults.length > 0 && grantResults[0] == android.content.pm.PackageManager.PERMISSION_GRANTED) {
-                // Reiniciar la actividad si se conceden los permisos
                 recreate();
             } else {
-                // Mostrar mensaje y cerrar si no se conceden los permisos
                 Toast.makeText(this, "Permisos de cámara requeridos para AR", Toast.LENGTH_LONG).show();
                 finish();
             }

@@ -3,9 +3,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <!-- Fragmento AR personalizado para image tracking -->
     <fragment
         android:id="@+id/arFragment"
-        android:name="com.google.ar.sceneform.ux.ArFragment"
+        android:name="com.example.rutaculturalar.ar.fragments.CustomImageTrackingArFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
@@ -42,7 +43,7 @@
 
         </LinearLayout>
 
-        <!-- Instrucciones -->
+        <!-- Instrucciones mejoradas -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -61,6 +62,17 @@
             android:textSize="12sp"
             android:gravity="center"
             android:layout_marginTop="4dp" />
+
+        <!-- Indicador de estado del tracking -->
+        <TextView
+            android:id="@+id/trackingStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="🔍 Buscando imagen..."
+            android:textColor="#FFEB3B"
+            android:textSize="11sp"
+            android:gravity="center"
+            android:layout_marginTop="8dp" />
 
     </LinearLayout>
 
