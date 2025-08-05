@@ -21,7 +21,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Establecer fondo desde assets
+        // Establecer fondo
         LinearLayout layout = findViewById(R.id.mainLayout);
         try {
             InputStream is = getAssets().open("fondo.jpg");
@@ -32,14 +32,14 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        // Configurar botón AR libre
+        // Configurar boton AR libre
         buttonStartAR = findViewById(R.id.buttonStartAR);
         buttonStartAR.setOnClickListener(view -> {
             Intent intent = new Intent(MainActivity.this, ARViewActivity.class);
             startActivity(intent);
         });
 
-        // Configurar botón Image Tracking
+        // Image Tracking
         buttonImageTracking = findViewById(R.id.buttonImageTracking);
         buttonImageTracking.setOnClickListener(view -> {
             Intent intent = new Intent(MainActivity.this, ImageTrackingActivity.class);
