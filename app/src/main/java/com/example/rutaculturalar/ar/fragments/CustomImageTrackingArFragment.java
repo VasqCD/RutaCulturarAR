@@ -13,37 +13,70 @@ public class CustomImageTrackingArFragment extends ArFragment {
 
     private String[] imagesToTrack;
     private AugmentedImageDatabase imageDatabase;
+    private boolean isImageDatabaseConfigured = false;
 
     public void setImagesToTrack(String[] imagesToTrack) {
         this.imagesToTrack = imagesToTrack;
     }
 
     @Override
-    protected void onSessionConfiguration(Session session, Config config) {
-        // Llamar al método padre primero
-        super.onSessionConfiguration(session, config);
+    public void onResume() {
+        super.onResume();
+        // Configurar image tracking cuando el fragmento esté activo
+        configureImageTrackingWhenReady();
+    }
 
-        // Deshabilitar detección de planos para focus en image tracking
-        config.setPlaneFindingMode(Config.PlaneFindingMode.DISABLED);
+    private void configureImageTrackingWhenReady() {
+        // Esperar a que la sesión AR esté lista
+        getArSceneView().getScene().addOnUpdateListener(frameTime -> {
+            if (!isImageDatabaseConfigured && getArSceneView().getSession() != null) {
+                configureImageTracking();
+                isImageDatabaseConfigured = true;
+            }
+        });
+    }
 
-        // Configurar para image tracking
-        config.setUpdateMode(Config.UpdateMode.LATEST_CAMERA_IMAGE);
+    private void configureImageTracking() {
+        Session session = getArSceneView().getSession();
+        if (session == null || imagesToTrack == null || imagesToTrack.length == 0) {
+            return;
+        }
 
-        // Crear y configurar la base de datos de imágenes
-        if (imagesToTrack != null && imagesToTrack.length > 0) {
-            try {
-                imageDatabase = setupAugmentedImageDatabase(session);
-                config.setAugmentedImageDatabase(imageDatabase);
-            } catch (IOException e) {
-                e.printStackTrace();
-                // Mostrar error al usuario
-                if (getActivity() != null) {
-                    getActivity().runOnUiThread(() -> {
-                        android.widget.Toast.makeText(getContext(),
-                                "Error cargando imágenes de referencia: " + e.getMessage(),
-                                android.widget.Toast.LENGTH_LONG).show();
-                    });
-                }
+        try {
+            // Crear base de datos de imágenes
+            imageDatabase = setupAugmentedImageDatabase(session);
+
+            // Configurar la sesión
+            Config config = session.getConfig();
+            config.setAugmentedImageDatabase(imageDatabase);
+            config.setUpdateMode(Config.UpdateMode.LATEST_CAMERA_IMAGE);
+            config.setPlaneFindingMode(Config.PlaneFindingMode.DISABLED);
+
+            // Aplicar configuración
+            session.configure(config);
+
+            android.util.Log.d("ImageTracking", "Configuración de image tracking completada");
+
+            // Mostrar mensaje de éxito en UI thread
+            if (getActivity() != null) {
+                getActivity().runOnUiThread(() -> {
+                    android.widget.Toast.makeText(getContext(),
+                            "Image tracking configurado - Enfoca la imagen del campo maya",
+                            android.widget.Toast.LENGTH_SHORT).show();
+                });
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            android.util.Log.e("ImageTracking", "Error configurando image tracking: " + e.getMessage());
+
+            // Mostrar error al usuario
+            if (getActivity() != null) {
+                getActivity().runOnUiThread(() -> {
+                    android.widget.Toast.makeText(getContext(),
+                            "Error configurando image tracking: " + e.getMessage(),
+                            android.widget.Toast.LENGTH_LONG).show();
+                });
             }
         }
     }
@@ -52,19 +85,31 @@ public class CustomImageTrackingArFragment extends ArFragment {
         AugmentedImageDatabase imageDatabase = new AugmentedImageDatabase(session);
 
         for (String imageName : imagesToTrack) {
-            InputStream is = getContext().getAssets().open(imageName);
-            Bitmap bitmap = BitmapFactory.decodeStream(is);
+            try {
+                InputStream is = getContext().getAssets().open(imageName);
+                Bitmap bitmap = BitmapFactory.decodeStream(is);
 
-            // Usar nombre sin extensión como identificador
-            String imageIdentifier = imageName.replace(".jpg", "").replace(".png", "");
+                if (bitmap == null) {
+                    throw new IOException("No se pudo cargar la imagen: " + imageName);
+                }
 
-            // Agregar imagen a la base de datos
-            // Puedes especificar el ancho físico en metros si conoces el tamaño real de la imagen
-            imageDatabase.addImage(imageIdentifier, bitmap);
+                // Usar nombre sin extensión como identificador
+                String imageIdentifier = imageName.replace(".jpg", "").replace(".png", "");
 
-            is.close();
+                // Agregar imagen a la base de datos con información de debugging
+                int imageIndex = imageDatabase.addImage(imageIdentifier, bitmap);
+                android.util.Log.d("ImageTracking", "Imagen agregada: " + imageIdentifier +
+                        " (índice: " + imageIndex + ", tamaño: " + bitmap.getWidth() + "x" + bitmap.getHeight() + ")");
+
+                is.close();
+
+            } catch (IOException e) {
+                android.util.Log.e("ImageTracking", "Error cargando imagen " + imageName + ": " + e.getMessage());
+                throw e;
+            }
         }
 
+        android.util.Log.d("ImageTracking", "Base de datos de imágenes creada con " + imagesToTrack.length + " imágenes");
         return imageDatabase;
     }
 
@@ -89,6 +134,12 @@ public class CustomImageTrackingArFragment extends ArFragment {
 
     // Método para verificar si las imágenes están configuradas
     public boolean isImageTrackingConfigured() {
-        return imageDatabase != null && imagesToTrack != null && imagesToTrack.length > 0;
+        return isImageDatabaseConfigured && imageDatabase != null && imagesToTrack != null && imagesToTrack.length > 0;
+    }
+
+    // Método para reconfigurar si es necesario
+    public void reconfigureImageTracking() {
+        isImageDatabaseConfigured = false;
+        configureImageTrackingWhenReady();
     }
 }
