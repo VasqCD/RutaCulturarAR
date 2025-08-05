@@ -1,11 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/ar_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
     <fragment
         android:id="@+id/arFragment"
         android:name="com.google.ar.sceneform.ux.ArFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-</FrameLayout>
+        android:layout_height="match_parent" />
 
+    <!-- Botones de control en la parte superior -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:orientation="horizontal"
+        android:padding="16dp">
+
+        <!-- Botón volver -->
+        <Button
+            android:id="@+id/btnBack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="← Volver"
+            android:backgroundTint="#FF5722"
+            android:textColor="#FFFFFF"
+            android:textSize="12sp"
+            android:padding="8dp" />
+
+        <!-- Espaciador para empujar el botón limpiar a la derecha -->
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+        <!-- Botón limpiar -->
+        <Button
+            android:id="@+id/btnClear"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="🗑️ Limpiar"
+            android:backgroundTint="#757575"
+            android:textColor="#FFFFFF"
+            android:textSize="12sp"
+            android:padding="8dp" />
+
+    </LinearLayout>
+
+</FrameLayout>

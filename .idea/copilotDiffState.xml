@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CopilotDiffPersistence">
+    <option name="pendingDiffs">
+      <map>
+        <entry key="$PROJECT_DIR$/app/src/main/res/drawable/popup_background.xml">
+          <value>
+            <PendingDiffInfo>
+              <option name="filePath" value="$PROJECT_DIR$/app/src/main/res/drawable/popup_background.xml" />
+              <option name="updatedContent" value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;&#10;&lt;shape xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;&gt;&#10;    &lt;solid android:color=&quot;#FFFFFF&quot; /&gt;&#10;    &lt;corners android:radius=&quot;8dp&quot; /&gt;&#10;    &lt;stroke android:width=&quot;1dp&quot; android:color=&quot;#E0E0E0&quot; /&gt;&#10;    &lt;padding android:left=&quot;8dp&quot; android:top=&quot;8dp&quot; android:right=&quot;8dp&quot; android:bottom=&quot;8dp&quot; /&gt;&#10;&lt;/shape&gt;" />
+            </PendingDiffInfo>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/res/drawable/tooltip_background.xml">
+          <value>
+            <PendingDiffInfo>
+              <option name="filePath" value="$PROJECT_DIR$/app/src/main/res/drawable/tooltip_background.xml" />
+              <option name="updatedContent" value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;&#10;&lt;shape xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;&gt;&#10;    &lt;solid android:color=&quot;#CC000000&quot; /&gt;&#10;    &lt;corners android:radius=&quot;4dp&quot; /&gt;&#10;&lt;/shape&gt;" />
+            </PendingDiffInfo>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>

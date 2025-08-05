@@ -14,6 +14,7 @@ import java.io.InputStream;
 public class MainActivity extends AppCompatActivity {
 
     Button buttonStartAR;
+    Button buttonImageTracking;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,10 +32,17 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
+        // Configurar boton AR libre
         buttonStartAR = findViewById(R.id.buttonStartAR);
-
         buttonStartAR.setOnClickListener(view -> {
             Intent intent = new Intent(MainActivity.this, ARViewActivity.class);
+            startActivity(intent);
+        });
+
+        // Image Tracking
+        buttonImageTracking = findViewById(R.id.buttonImageTracking);
+        buttonImageTracking.setOnClickListener(view -> {
+            Intent intent = new Intent(MainActivity.this, ImageTrackingActivity.class);
             startActivity(intent);
         });
     }
