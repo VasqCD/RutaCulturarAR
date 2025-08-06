@@ -5,7 +5,6 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.ar.core.AugmentedImage;
 import com.google.ar.core.Frame;
-import com.google.ar.core.TrackingState;
 import com.google.ar.sceneform.AnchorNode;
 import com.google.ar.sceneform.math.Vector3;
 import com.google.ar.sceneform.rendering.ModelRenderable;
@@ -13,7 +12,7 @@ import com.google.ar.sceneform.ux.TransformableNode;
 
 import com.example.rutaculturalar.ar.managers.ARModelManager;
 import com.example.rutaculturalar.ar.managers.AR3DInfoProvider;
-import com.example.rutaculturalar.ar.fragments.CustomImageTrackingArFragment; // NUEVO IMPORT
+import com.example.rutaculturalar.ar.fragments.CustomImageTrackingArFragment;
 import com.example.rutaculturalar.ar.interfaces.IARModelManager;
 import com.example.rutaculturalar.ar.interfaces.IAR3DInfoProvider;
 import com.example.rutaculturalar.data.MayanBallCourtInfo;
@@ -24,7 +23,7 @@ import java.util.Map;
 
 public class ImageTrackingActivity extends AppCompatActivity {
 
-    private CustomImageTrackingArFragment arFragment; // CAMBIO AQUÍ
+    private CustomImageTrackingArFragment arFragment;
     private ModelRenderable model;
     private IARModelManager modelManager;
     private IAR3DInfoProvider ar3DInfoProvider;
@@ -71,7 +70,7 @@ public class ImageTrackingActivity extends AppCompatActivity {
         }
 
         // Configurar las imágenes a detectar
-        String[] imagesToTrack = {"campo_maya_reference.jpg"};
+        String[] imagesToTrack = {"gran_plaza_reference.jpg"};
         arFragment.setImagesToTrack(imagesToTrack);
     }
 
@@ -99,12 +98,12 @@ public class ImageTrackingActivity extends AppCompatActivity {
     }
 
     private void loadMayanBallCourtModel() {
-        modelManager.loadModel("CampoFutbolMaya.glb", new IARModelManager.ModelLoadCallback() {
+        modelManager.loadModel("GranPlaza.glb", new IARModelManager.ModelLoadCallback() {
             @Override
             public void onModelLoaded(ModelRenderable loadedModel) {
                 model = loadedModel;
                 Toast.makeText(ImageTrackingActivity.this,
-                        "Modelo cargado - Enfoca una imagen del campo maya",
+                        "Enfoca la imagen de la gran plaza maya",
                         Toast.LENGTH_LONG).show();
             }
 
@@ -184,7 +183,7 @@ public class ImageTrackingActivity extends AppCompatActivity {
                 showCulturalInfo(modelNode);
 
                 Toast.makeText(this,
-                        "¡Campo maya detectado!",
+                        "¡Gran Plaza detectada!",
                         Toast.LENGTH_SHORT).show();
             }
         });

@@ -46,12 +46,12 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="📱 Enfoca una imagen del Campo de Pelota Maya"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:text="📱 Enfoca una imagen de la Gran Plaza Maya"
             android:textColor="#FFFFFF"
             android:textSize="14sp"
-            android:textStyle="bold"
-            android:gravity="center"
-            android:layout_marginTop="8dp" />
+            android:textStyle="bold" />
 
         <TextView
             android:layout_width="match_parent"
