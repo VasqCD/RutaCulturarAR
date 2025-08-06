@@ -32,7 +32,6 @@ public class ARViewActivity extends AppCompatActivity {
     private ArFragment arFragment;
     private ModelRenderable model;
 
-    // Nuevos managers siguiendo principios SOLID
     private IARModelManager modelManager;
     private ISurfaceDetector surfaceDetector;
     private IContextualInfoProvider contextualInfoProvider;
@@ -40,8 +39,8 @@ public class ARViewActivity extends AppCompatActivity {
     private IAR3DInfoProvider ar3DInfoProvider;
 
     private boolean isModelPlaced = false;
-    private int infoCounter = 0; // Para rotar entre diferentes informaciones
-    private TransformableNode currentModelNode; // Referencia al modelo actual
+    private int infoCounter = 0;
+    private TransformableNode currentModelNode;
 
     // Lista para mantener referencia a todos los objetos colocados
     private java.util.List<AnchorNode> placedObjects = new java.util.ArrayList<>();

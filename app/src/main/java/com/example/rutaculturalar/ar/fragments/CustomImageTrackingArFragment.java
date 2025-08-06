@@ -23,32 +23,69 @@ public class CustomImageTrackingArFragment extends ArFragment {
     public void onResume() {
         super.onResume();
 
-        hideHandAnimation();
+        // Deshabilitar la animación de plane discovery (mano que indica mover el dispositivo)
+        disablePlaneDiscoveryAnimation();
 
+        // Configurar image tracking cuando el fragmento esté activo
         configureImageTrackingWhenReady();
     }
 
-    private void hideHandAnimation() {
+    private void disablePlaneDiscoveryAnimation() {
+        // Método más efectivo: usar un handler para ocultar la animación después de que se cargue
         new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
-            hideImageViewsRecursively(getView());
-        }, 500);
+            hideHandAnimation();
+        }, 500); // Esperar medio segundo para que la vista se cargue completamente
+
+        // También configurar un listener para ocultarla continuamente
+        if (getArSceneView() != null) {
+            getArSceneView().getScene().addOnUpdateListener(frameTime -> {
+                hideHandAnimation();
+            });
+        }
     }
 
-    private void hideImageViewsRecursively(android.view.View view) {
-        if (view == null) return;
+    private void hideHandAnimation() {
+        try {
+            if (getView() != null) {
+                hideHandImageViews(getView());
+            }
+        } catch (Exception e) {
+            android.util.Log.d("ImageTracking", "Error ocultando animación de mano: " + e.getMessage());
+        }
+    }
 
+    private void hideHandImageViews(android.view.View view) {
         if (view instanceof android.widget.ImageView) {
             android.widget.ImageView imageView = (android.widget.ImageView) view;
+
+            // Verificar si la ImageView contiene la animación de la mano
             if (imageView.getDrawable() != null) {
-                String drawable = imageView.getDrawable().toString();
-                if (drawable.contains("sceneform_hand") || drawable.contains("hand_phone")) {
+                String drawableString = imageView.getDrawable().toString();
+                if (drawableString.contains("sceneform_hand") || drawableString.contains("hand_phone")) {
                     imageView.setVisibility(android.view.View.GONE);
+                    android.util.Log.d("ImageTracking", "Animación de mano ocultada");
                 }
             }
+
+            // También verificar por tag o ID
+            try {
+                String resourceName = "";
+                if (imageView.getId() != android.view.View.NO_ID) {
+                    resourceName = getResources().getResourceEntryName(imageView.getId()).toLowerCase();
+                    if (resourceName.contains("hand") || resourceName.contains("plane") || resourceName.contains("discovery")) {
+                        imageView.setVisibility(android.view.View.GONE);
+                        android.util.Log.d("ImageTracking", "ImageView ocultada por ID: " + resourceName);
+                    }
+                }
+            } catch (Exception e) {
+                // Ignorar errores de ID
+            }
+
         } else if (view instanceof android.view.ViewGroup) {
+            // Buscar recursivamente en el ViewGroup
             android.view.ViewGroup viewGroup = (android.view.ViewGroup) view;
             for (int i = 0; i < viewGroup.getChildCount(); i++) {
-                hideImageViewsRecursively(viewGroup.getChildAt(i));
+                hideHandImageViews(viewGroup.getChildAt(i));
             }
         }
     }
@@ -84,7 +121,7 @@ public class CustomImageTrackingArFragment extends ArFragment {
 
             android.util.Log.d("ImageTracking", "Configuración de image tracking completada");
 
-            // Mostrar mensaje de éxito
+            // Mostrar mensaje de éxito en UI thread
             if (getActivity() != null) {
                 getActivity().runOnUiThread(() -> {
                     android.widget.Toast.makeText(getContext(),
@@ -123,7 +160,7 @@ public class CustomImageTrackingArFragment extends ArFragment {
                 // Usar nombre sin extensión como identificador
                 String imageIdentifier = imageName.replace(".jpg", "").replace(".png", "");
 
-                // Agregar imagen a la base de datos
+                // Agregar imagen a la base de datos con información de debugging
                 int imageIndex = imageDatabase.addImage(imageIdentifier, bitmap);
                 android.util.Log.d("ImageTracking", "Imagen agregada: " + imageIdentifier +
                         " (índice: " + imageIndex + ", tamaño: " + bitmap.getWidth() + "x" + bitmap.getHeight() + ")");

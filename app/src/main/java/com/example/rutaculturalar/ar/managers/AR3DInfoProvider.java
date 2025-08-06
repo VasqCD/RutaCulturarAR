@@ -77,7 +77,7 @@ public class AR3DInfoProvider implements IAR3DInfoProvider {
         descView.setTextSize(9);
         descView.setTextColor(Color.parseColor("#333333"));
         descView.setGravity(Gravity.CENTER);
-        descView.setMaxLines(10); // Aumentado de 8 a 10 líneas
+        descView.setMaxLines(10);
         descView.setLineSpacing(2, 1.0f);
         descView.setPadding(6, 6, 6, 0);
 
