@@ -16,7 +16,9 @@
         android:label="@string/app_name"
         android:theme="@style/Theme.AppCompat.Light.DarkActionBar">
 
-        <!-- Metadatos para ARCore - DENTRO de application -->
+        <!-- Metadatos para ARCore - DENTRO de application
+        Google Play Services for AR
+        -->
         <meta-data android:name="com.google.ar.core" android:value="required" />
 
         <!-- Actividad principal -->

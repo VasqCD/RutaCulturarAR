@@ -177,11 +177,11 @@ public class ARViewActivity extends AppCompatActivity {
     }
 
     private void loadMayanBallCourtModel() {
-        modelManager.loadModel("GranPlaza.glb", new IARModelManager.ModelLoadCallback() {
+        modelManager.loadModel("CampoFutbolMaya.glb", new IARModelManager.ModelLoadCallback() {
             @Override
             public void onModelLoaded(ModelRenderable loadedModel) {
                 model = loadedModel;
-                Toast.makeText(ARViewActivity.this, "Modelo del campo maya cargado", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ARViewActivity.this, "Modelo cargado", Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -208,7 +208,6 @@ public class ARViewActivity extends AppCompatActivity {
                 if (surfaceDetector.isHorizontalPlane(plane)) {
                     placeModelOnSurface(hitResult, "horizontal");
                 } else if (surfaceDetector.isVerticalPlane(plane)) {
-                    // Mostrar tooltip en 3D en lugar de popup plano
                     showVerticalSurfaceWarning(hitResult);
                     return;
                 }
