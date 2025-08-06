@@ -177,7 +177,7 @@ public class ARViewActivity extends AppCompatActivity {
     }
 
     private void loadMayanBallCourtModel() {
-        modelManager.loadModel("CampoFutbolMaya.glb", new IARModelManager.ModelLoadCallback() {
+        modelManager.loadModel("GranPlaza.glb", new IARModelManager.ModelLoadCallback() {
             @Override
             public void onModelLoaded(ModelRenderable loadedModel) {
                 model = loadedModel;

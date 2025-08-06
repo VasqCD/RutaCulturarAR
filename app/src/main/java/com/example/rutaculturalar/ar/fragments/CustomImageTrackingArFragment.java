@@ -125,7 +125,7 @@ public class CustomImageTrackingArFragment extends ArFragment {
             if (getActivity() != null) {
                 getActivity().runOnUiThread(() -> {
                     android.widget.Toast.makeText(getContext(),
-                            "Image tracking configurado - Enfoca la imagen del campo maya",
+                            "Enfoca la imagen del campo maya",
                             android.widget.Toast.LENGTH_SHORT).show();
                 });
             }

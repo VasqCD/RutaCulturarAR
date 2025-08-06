@@ -184,7 +184,7 @@ public class ImageTrackingActivity extends AppCompatActivity {
                 showCulturalInfo(modelNode);
 
                 Toast.makeText(this,
-                        "¡Campo maya detectado! Toca el modelo para más información",
+                        "¡Campo maya detectado!",
                         Toast.LENGTH_SHORT).show();
             }
         });
@@ -202,7 +202,7 @@ public class ImageTrackingActivity extends AppCompatActivity {
                 ar3DInfoProvider.hide3DInfo();
 
                 Toast.makeText(this,
-                        "Imagen perdida - Vuelve a enfocar la imagen",
+                        "Imagen perdida",
                         Toast.LENGTH_SHORT).show();
             }
         });
@@ -210,8 +210,8 @@ public class ImageTrackingActivity extends AppCompatActivity {
 
     private void setupModelControls(TransformableNode modelNode) {
         // Configurar controles del modelo
-        modelNode.getScaleController().setMinScale(0.05f);
-        modelNode.getScaleController().setMaxScale(0.3f);
+        modelNode.getScaleController().setMinScale(1f);
+        modelNode.getScaleController().setMaxScale(3f);
         modelNode.getRotationController().setEnabled(true);
 
         // Listener para mostrar información al tocar
